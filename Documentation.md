@@ -94,9 +94,11 @@ _Groups also must document where the components of their system are placed in th
 
 #### Run Server A
 
+**To run Server A as development server:<br>**
+
 Open terminal and navigate to `server-a`.
 <br><br>
-Run server on local machine with commands:<br>
+Run server with commands:<br>
 
 `npm install`
 <br>
@@ -112,6 +114,16 @@ and
 <br>
 `npm dev`
 
+**Create Docker image and run Server A as Docker container:**<br>
+
+Build the server with command, giving it the tag 'server-a':<br>
+
+` docker build -t server-a .`
+
+Run the container from the image in detached mode and expose port 8080:<br>
+
+`docker run -d -p 8080:8080 server-a`
+
 ## Learning Diary
 
 - 2024-03-23 Created issues based on [Group Project description](https://moodle.tuni.fi/pluginfile.php/4170962/mod_label/intro/Group%20project.pdf?time=1709636527702).
@@ -119,8 +131,10 @@ and
 - 2024-03-29 Created Server A from Swagger API [Issue #1](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/1)
   - The make-me-a-sandwich Swagger API was updated to use string as id instead of iteger, because uuid library is used to create unique ids for sandwich order
   - Minimal functionality for each /order - endpoint was create where array of orders is stored as a variable.
+  - Created Dockerfile to create image of Server A, chose to use image node:21, since this is the same version as installed on my machine.
 
 ## Learned issues
 
 - 2024-03-29
   Learned how to create server stub with Swagger tools. Naively I though this would create a fairly functional server and I was surprised when nothing worked in the beginning. Yet, once I got going, I appreciated how nice base for the server was created by the Swagger tools.
+  Learned to run server as a docker container. Very happy that I succeeded with this, as the whole concept of docker images and containers is difficult to grasp for me.
