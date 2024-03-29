@@ -92,6 +92,26 @@ Uses REST calls to place sandwitch order to Server A and to retrieve available o
 
 _Groups also must document where the components of their system are placed in the repository, and how the course personnel can deploy the group's system on their own computers when testing it._
 
+#### Run Server A
+
+Open terminal and navigate to `server-a`.
+<br><br>
+Run server on local machine with commands:<br>
+
+`npm install`
+<br>
+and
+<br>
+`npm start`
+
+Run server in development mode on local machine with commands:<br>
+
+`npm install`
+<br>
+and
+<br>
+`npm dev`
+
 ## Learning Diary
 
 - 2024-03-23 Created issues based on [Group Project description](https://moodle.tuni.fi/pluginfile.php/4170962/mod_label/intro/Group%20project.pdf?time=1709636527702).
