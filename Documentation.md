@@ -81,7 +81,30 @@ Server B "makes" the sandwitch. It subscirbes to message broker Message Queue 1.
 #### Message Broker
 
 RabbitMQ.<br>
-Message broker with two message queues. Message Queue 1 sends information about new sandwitch orders. Message Queue 2 sends information about sandwitch order status.
+Message broker with two message queues.<br>
+
+- Server A send sandwich order to Message Queue 1. At this point, status of order is `received`.
+- Message Queue 1 acknowledges reception of task from Server A. At this point, status of order is `inQueue`.
+- Message Queue 1 sends task to Server B.
+- Server B processes order. When order is ready, Server B sends message to Message Queue 2 with either status `ready` or `fail`.
+- Message Queue 2 sends `ready` or `fail` message to Server A.
+- Status of order is updated to either `ready` or `fail`.
+
+```mermaid
+flowchart LR
+    A(Server A)
+    C(Message Queue 1)
+    D(Message Queue 2)
+    B(Server B)
+    A --> |status = received| C
+    C --> |status = inQueue| A
+    C --> |status = inQueue| B
+    B --> |satus = ready| D
+    D --> |satus = ready / failed| A
+```
+
+For development of Message Broker, run RabbitMQ as docker container with command:<br>
+`docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.13-management`
 
 #### Frontend (Client)
 
@@ -126,15 +149,20 @@ Run the container from the image in detached mode and expose port 8080:<br>
 
 ## Learning Diary
 
-- 2024-03-23 Created issues based on [Group Project description](https://moodle.tuni.fi/pluginfile.php/4170962/mod_label/intro/Group%20project.pdf?time=1709636527702).
-- 2024-03-24 Created draft of Project Documentation [Issue #22](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/22).
-- 2024-03-29 Created Server A from Swagger API [Issue #1](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/1)
+- **2024-03-23** Created issues based on [Group Project description](https://moodle.tuni.fi/pluginfile.php/4170962/mod_label/intro/Group%20project.pdf?time=1709636527702)
+- **2024-03-24** Created draft of Project Documentation [Issue #22](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/22).
+- **2024-03-29** Created Server A from Swagger API [Issue #1](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/1)
   - The make-me-a-sandwich Swagger API was updated to use string as id instead of iteger, because uuid library is used to create unique ids for sandwich order
   - Minimal functionality for each /order - endpoint was create where array of orders is stored as a variable.
   - Created Dockerfile to create image of Server A, chose to use image node:21, since this is the same version as installed on my machine.
+- **2024-03-30** Worked through RabbitMQ tutorials 1 - 3 [Issue #11](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/11)
+  - tutorials gave a good idea how the message broker should look like.
+  - created a sketch of how the message queues are interacting with the servers.
 
 ## Learned issues
 
-- 2024-03-29
+- **2024-03-29**
   Learned how to create server stub with Swagger tools. Naively I though this would create a fairly functional server and I was surprised when nothing worked in the beginning. Yet, once I got going, I appreciated how nice base for the server was created by the Swagger tools.
   Learned to run server as a docker container. Very happy that I succeeded with this, as the whole concept of docker images and containers is difficult to grasp for me.
+- **2024-03-30**
+  Learned basics of RabbitMQ. Seems to be straight forward. I'm hopeful that I will succeed in implementing the message broker for the project work.
