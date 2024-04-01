@@ -2,6 +2,10 @@
 
 const express = require('express');
 
+let receiveTask = require('./rabbit-utils/receiveTask');
+
+receiveTask.getTask('localhost', 'order-fulfilled');
+
 var fs = require('fs'),
   path = require('path'),
   http = require('http');
