@@ -25,7 +25,7 @@ exports.addOrder = function (order) {
       status: order.status,
     };
     orders.push(newOrder);
-    resolve(orders);
+    resolve(newOrder);
   });
 };
 
