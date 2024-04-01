@@ -66,7 +66,8 @@ Description of API endpoints:
   Curently, `id` property is added by addOrder function. Later, creation of id will be moved to database.<br>
 
   Receives REST API requests from Frontend about new orders placed and respondes to Frontend request with available sandwitch orders. Server A is connected to Frontend via WebSocket to publish updates about sandwitch status.
-  When Server A receives new order from Frontend, sandwitch order is stored in database and sends message to Message Queue 1 or message broker about new order.
+  When Server A receives new order from Frontend, sandwitch order is stored in database and sends message to Message Queue "received-orders".
+  Server A listens to Message Queue "order-fulfilled" to receive information about completed order.
 
 #### Database
 
@@ -76,7 +77,7 @@ Stores all the order Server A has received.
 #### Server B
 
 Node.js server.<br>
-Server B "makes" the sandwitch. It subscirbes to message broker Message Queue 1. Whenever it receives a new message, it will "make" the sandwitch: after a set delay, Server B will send message to message broker's Message Queue 2 that the sandwitch is ready (sandwitch order fulfilled).
+Server B is very simplistic. It simply runs a function that listens to the RabbitMQ message queue "received-orders" which handles the received sandwich orders. If a sandwitch order is received, Server B will "make" the sandwich, and after it finished "making" the sandwich (after a 10s wait), it will send message to the message queue "order-fulfilled", to inform about the fulfillment of the order.
 
 #### Message Broker
 
@@ -119,7 +120,7 @@ _Groups also must document where the components of their system are placed in th
 
 **To run Server A as development server:<br>**
 
-Open terminal and navigate to `server-a`.
+Open terminal and navigate to folder `server-a`.
 <br><br>
 Run server with commands:<br>
 
@@ -147,6 +148,28 @@ Run the container from the image in detached mode and expose port 8080:<br>
 
 `docker run -d -p 8080:8080 server-a`
 
+#### Run Server B
+
+**To run Server B as development server:<br>**
+
+Open terminal and navigate to folder `server-b`.
+<br><br>
+Run server with commands:<br>
+
+`npm install`
+<br>
+and
+<br>
+`npm start`
+
+Run server in development mode on local machine with commands:<br>
+
+`npm install`
+<br>
+and
+<br>
+`npm dev`
+
 ## Learning Diary
 
 - **2024-03-23** Created issues based on [Group Project description](https://moodle.tuni.fi/pluginfile.php/4170962/mod_label/intro/Group%20project.pdf?time=1709636527702)
@@ -158,6 +181,17 @@ Run the container from the image in detached mode and expose port 8080:<br>
 - **2024-03-30** Worked through RabbitMQ tutorials 1 - 3 [Issue #11](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/11)
   - tutorials gave a good idea how the message broker should look like.
   - created a sketch of how the message queues are interacting with the servers.
+- **2024-04-01**
+  - Implemented Server A publishing sandwich orders to message queue A [Issue #2](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/2)
+  - Created Server B [Issue #6](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/6)
+  - Server B: Set up subscription of Server B to message queue A [Issue #7](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/7)
+  - Server B: Implemented delay functionality [Issue #9](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/9)
+  - Implemented Server B publishing to message queue B [Issue #8](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/8)
+  - Set up basic message broker functionality, where Server A sends task to "make" sandwich to message broker, message broker relays this information to Server B, which "makes" the sandwich, once sandwich is done, message is send through message broker to Server A.
+  - To do next:
+    - make sure that all the setting for the producer and consumer are ok.
+    - implement how Server A updates order status based on feedback it receives from message broker.
+    - Fix issue that order is received by Server A in wrong format
 
 ## Learned issues
 
