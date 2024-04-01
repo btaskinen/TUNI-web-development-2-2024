@@ -4,10 +4,11 @@
 
 'use strict';
 
-let amqp = require('amqplib');
+const sendTask = require('./sendTask');
+
+const amqp = require('amqplib');
 
 module.exports.getTask = (rabbitHost, queueName) => {
-  console.log('HELLO FROM SERVER B');
   amqp
     .connect('amqp://' + rabbitHost)
     .then((connection) => {
@@ -16,7 +17,7 @@ module.exports.getTask = (rabbitHost, queueName) => {
       });
       return connection.createChannel().then((channel) => {
         let ok = channel.assertQueue(queueName, { durable: true });
-        ok = ok.then(function () {
+        ok = ok.then(() => {
           channel.prefetch(1);
         });
         ok = ok.then(() => {
@@ -26,6 +27,7 @@ module.exports.getTask = (rabbitHost, queueName) => {
             ' [*] Waiting for messages. To exit press CTRL+C'
           );
         });
+
         return ok;
 
         function doWork(msg) {
@@ -33,9 +35,11 @@ module.exports.getTask = (rabbitHost, queueName) => {
           console.log(" [x] Received '%s'", body);
           var secs = body.split('.').length - 1;
           //console.log(" [x] Task takes %d seconds", secs);
-          setTimeout(function () {
+          setTimeout(() => {
             console.log(new Date(), ' [x] Done');
-            ch.ack(msg);
+            channel.ack(msg);
+            console.log('BODY', body);
+            sendTask.addTask('localhost', 'order-fulfilled', body);
           }, 10000);
         }
       });
