@@ -31,9 +31,9 @@ module.exports.getTask = (rabbitHost, queueName) => {
         return ok;
 
         function doWork(msg) {
-          var body = msg.content.toString();
+          let body = msg.content.toString();
           console.log(" [x] Received '%s'", body);
-          var secs = body.split('.').length - 1;
+          let secs = body.split('.').length - 1;
           //console.log(" [x] Task takes %d seconds", secs);
           setTimeout(() => {
             console.log(new Date(), ' [x] Done');

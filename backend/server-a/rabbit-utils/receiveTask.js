@@ -3,35 +3,31 @@
 
 'use strict';
 
-var amqp = require('amqplib');
+const amqp = require('amqplib');
 
-module.exports.getTask = function (rabbitHost, queueName) {
+module.exports.getTask = (rabbitHost, queueName) => {
   amqp
     .connect('amqp://' + rabbitHost)
-    .then(function (conn) {
-      process.once('SIGINT', function () {
-        conn.close();
+    .then((connection) => {
+      process.once('SIGINT', () => {
+        connection.close();
       });
-      return conn.createChannel().then(function (ch) {
-        var ok = ch.assertQueue(queueName, { durable: true });
-        ok = ok.then(function () {
-          ch.prefetch(1);
+      return connection.createChannel().then((channel) => {
+        var ok = channel.assertQueue(queueName, { durable: true });
+        ok = ok.then(() => {
+          channel.prefetch(1);
         });
-        ok = ok.then(function () {
-          ch.consume(queueName, doWork, { noAck: false });
+        ok = ok.then(() => {
+          channel.consume(queueName, doWork, { noAck: false });
           console.log(' [*] Waiting for messages. To exit press CTRL+C');
         });
         return ok;
 
         function doWork(msg) {
-          var body = msg.content.toString();
+          const body = JSON.parse(msg.content.toString());
           console.log(" [x] Received '%s'", body);
-          var secs = body.split('.').length - 1;
-          //console.log(" [x] Task takes %d seconds", secs);
-          setTimeout(() => {
-            console.log(' [x] Done');
-            ch.ack(msg);
-          }, secs * 1000);
+          console.log(' [x] Done');
+          channel.ack(msg);
         }
       });
     })

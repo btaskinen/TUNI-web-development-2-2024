@@ -4,7 +4,7 @@
 
 'use strict';
 
-var amqp = require('amqplib');
+const amqp = require('amqplib');
 
 module.exports.addTask = (rabbitHost, queueName, order) => {
   amqp.connect('amqp://' + rabbitHost).then((connection) => {
@@ -15,7 +15,7 @@ module.exports.addTask = (rabbitHost, queueName, order) => {
         {
           persistent: true,
         },
-        function (err, ok) {
+        (err, ok) => {
           if (err !== null) console.warn(new Date(), 'Message nacked!');
           else console.log(new Date(), 'Message acked');
         }
