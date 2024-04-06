@@ -188,10 +188,13 @@ and
   - Server B: Implemented delay functionality [Issue #9](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/9)
   - Implemented Server B publishing to message queue B [Issue #8](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/8)
   - Set up basic message broker functionality, where Server A sends task to "make" sandwich to message broker, message broker relays this information to Server B, which "makes" the sandwich, once sandwich is done, message is send through message broker to Server A.
-  - To do next:
-    - make sure that all the setting for the producer and consumer are ok.
-    - implement how Server A updates order status based on feedback it receives from message broker.
-    - Fix issue that order is received by Server A in wrong format
+- **2024-04-06**
+
+  - Made sure that all the settings for the producer and consumer are ok.
+  - Fixed issue that order is received by Server A in wrong format.
+
+  With the above two steps, Issues [Issue #4](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/4), [Issue #8](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/8), [Issue #10](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/10), [Issue #12](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/12) and [Issue #13](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/13) were closed.<br>
+  The two message broker queues "received-orders" (Message Queue 1) and "order-fulfilled" (Message Queue 2) have now been implemented with basic functionality.
 
 ## Learned issues
 
