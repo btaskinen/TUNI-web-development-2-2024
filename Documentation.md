@@ -196,6 +196,8 @@ and
   With the above two steps, Issues [Issue #4](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/4), [Issue #8](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/8), [Issue #10](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/10), [Issue #12](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/12) and [Issue #13](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/13) were closed.<br>
   The two message broker queues "received-orders" (Message Queue 1) and "order-fulfilled" (Message Queue 2) have now been implemented with basic functionality.
 
+  - Started to create Dockerfile for Server B [Issue #25](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/25) and docker-compose file [Issue #23](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/23). However, having issues with getting `server-a` and `server-b` containers to connect to rabbitmq container `(Error: connect ECONNREFUSED 127.0.0.1:5672)`. When including the given command in `server-a` and `server-b` services, running the containers fails due to `SyntaxError: Invalid or unexpected token` in `wait-for-it.sh` script.
+
 ## Learned issues
 
 - **2024-03-29**
