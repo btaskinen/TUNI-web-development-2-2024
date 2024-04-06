@@ -7,27 +7,27 @@
 # and this file is ready, you use this file and run it with:
 # `docker-compose up --build`
 
-version: "3"
+version: '3'
 
 services:
   # An example configuration of server A for groups' convenience.
   # server-a is based on the Docker image the groups produce and build themselves.
   server-a:
     # Change the image information to match your server A image
-    image: # $USERNAME/$IMAGENAME:$TAG, something like group000/node-swagger:3a
+    image: groupbt/server-a
     # 'depends_on' and 'command' are  to be used when used
     # with RabbitMQ service in this file. 'depends_on' must be set
     # to RabbitMQ service's name from this file, and 'command'
     # can be modified to be anything, but what is given should
     # work. Just uncomment them
-    # depends_on:
-    #   -  rapid-runner-rabbit
-    # command: ["./utils/wait-for-it.sh", "rapid-runner-rabbit:5672", "--",  "npm", "start"]
+    depends_on:
+      - rabbitmq
+    # command: ['./utils/wait-for-it.sh', 'rabbitmq:5672', '--', 'npm', 'start']
     build:
       dockerfile: Dockerfile
-      context:  ./backend/server-a
+      context: ./backend/server-a
     ports:
-      - "12345:8080"
+      - '12345:8080'
     networks:
       - backend
 
@@ -42,22 +42,37 @@ services:
   #   ports:
   #   expose:
   #   networks:
-
+  rabbitmq:
+    # set lates rabbitmq image
+    image: rabbitmq:3.13-management
+    # give a name for the container
+    container_name: 'rabbitmq'
+    # define the local ports that are exposed to container ports
+    ports:
+      - 5672:5672
+      - 15672:15672
+    # map volues to preserve queues and logs on container restart
+    volumes:
+      - ~/.docker.conf/rabbitmq/data/:/var/lib/rabbitmq/
+      - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq/
+    networks:
+      - backend
   # much of the server-b service entry can be copied from server-a
   # service above. server-b directory Dockerfile has more
   # information.
   # A set of needed Docker instructions like 'image:' are shown
   # below, groups should set their values. Groups are free to
   # CRUD this set of instructions as they see fit.
-  # server-b:
-      # image:
-      # depends_on:
-      # command: ["./utils/wait-for-it.sh", "rapid-runner-rabbit:5672", "--",  "npm", "start"]
-      # build:
-      #   dockerfile:
-      #   context:
-      # expose:
-      # networks:
+  server-b:
+    image: groupbt/server-b
+    depends_on:
+      - rabbitmq
+    # command: ['./utils/wait-for-it.sh', 'rabbitmq:5672', '--', 'npm', 'start']
+    build:
+      dockerfile: Dockerfile
+      context: ./backend/server-b
+    networks:
+      - backend
 
   # Your group might want to use a database to store some data
   # You can use any database you wish, PostgreSQL, MySQL and
@@ -72,7 +87,7 @@ services:
 # exposed ports.
 networks:
   backend:
-
+    driver: bridge
 # If you use databases for storing information, you can define
 # their volumes here.
 # Documentation: https://docs.docker.com/storage/volumes/
