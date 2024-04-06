@@ -6,4 +6,14 @@
 # You should be able to produce a working installation by just
 # following the instructions.
 
-#FROM node:version...
+FROM node:21
+
+WORKDIR /index
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+CMD [ "node", "index.js" ]
