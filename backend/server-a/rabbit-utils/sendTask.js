@@ -22,6 +22,9 @@ module.exports.addTask = (rabbitHost, queueName, order) => {
             if (err !== null) console.warn(new Date(), 'Message nacked!');
             else {
               console.log(new Date(), 'Message acked');
+              let updatedOrder = order;
+              updatedOrder.status = 'inQueue';
+              return updatedOrder;
             }
           }
         );

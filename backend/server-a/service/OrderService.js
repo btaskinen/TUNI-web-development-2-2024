@@ -22,7 +22,7 @@ exports.addOrder = function (order) {
     const newOrder = {
       sandwichId: order.sandwichId,
       id: newId,
-      status: order.status,
+      status: 'received',
     };
     orders.push(newOrder);
     resolve(newOrder);
