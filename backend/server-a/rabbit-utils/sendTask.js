@@ -4,23 +4,29 @@
 
 'use strict';
 
-let amqp = require('amqplib');
+const amqp = require('amqplib');
 
 module.exports.addTask = (rabbitHost, queueName, order) => {
   console.log(order);
-  amqp.connect('amqp://' + rabbitHost).then((connection) => {
-    connection.createConfirmChannel().then((channel) => {
-      channel.sendToQueue(
-        queueName,
-        new Buffer.from(JSON.stringify(order)),
-        {
-          persistent: true,
-        },
-        (err, ok) => {
-          if (err !== null) console.warn(new Date(), 'Message nacked!');
-          else console.log(new Date(), 'Message acked');
-        }
-      );
-    });
-  });
+  amqp
+    .connect('amqp://' + rabbitHost)
+    .then((connection) => {
+      connection.createConfirmChannel().then((channel) => {
+        channel.sendToQueue(
+          queueName,
+          new Buffer.from(JSON.stringify(order)),
+          {
+            persistent: true,
+          },
+          (err, ok) => {
+            if (err !== null) console.warn(new Date(), 'Message nacked!');
+            else {
+              console.log(new Date(), 'Message acked');
+              console.log('OK', ok);
+            }
+          }
+        );
+      });
+    })
+    .catch((error) => console.log(error));
 };

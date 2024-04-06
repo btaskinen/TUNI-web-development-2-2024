@@ -1,9 +1,9 @@
 'use strict';
 
-let utils = require('../utils/writer.js');
-let Order = require('../service/OrderService');
-let sendTask = require('../rabbit-utils/sendTask.js');
-let receiveTask = require('../rabbit-utils/receiveTask.js');
+const utils = require('../utils/writer.js');
+const Order = require('../service/OrderService');
+const sendTask = require('../rabbit-utils/sendTask.js');
+const receiveTask = require('../rabbit-utils/receiveTask.js');
 
 module.exports.addOrder = function addOrder(req, res, next) {
   const order = req.swagger.params['order'].value;
