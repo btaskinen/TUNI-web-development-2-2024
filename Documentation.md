@@ -170,6 +170,24 @@ and
 <br>
 `npm dev`
 
+#### Run Frontend
+
+**To run Frontend in development mode:<br>**
+
+Open terminal and navigate to folder `frontend`.
+<br><br>
+Install dependencies:<br>
+
+`npm install`
+<br>
+
+Start the development server:<br>
+
+`npm run dev`
+<br>
+
+Open address `http://localhost:5173/` in browser.
+
 ## Learning Diary
 
 - **2024-03-23** Created issues based on [Group Project description](https://moodle.tuni.fi/pluginfile.php/4170962/mod_label/intro/Group%20project.pdf?time=1709636527702)
