@@ -1,5 +1,7 @@
 'use strict';
 
+const rabbitmqHost = process.env.RABBITMQ_HOST || 'localhost';
+
 const utils = require('../utils/writer.js');
 const Order = require('../service/OrderService');
 const sendTask = require('../rabbit-utils/sendTask.js');
@@ -9,7 +11,7 @@ module.exports.addOrder = function addOrder(req, res, next) {
   Order.addOrder(order)
     .then(function (response) {
       utils.writeJson(res, response);
-      sendTask.addTask('localhost', 'received-orders', response);
+      sendTask.addTask(rabbitmqHost, 'received-orders', response);
     })
     .catch(function (response) {
       utils.writeJson(res, response);

@@ -4,6 +4,8 @@
 
 'use strict';
 
+const rabbitmqHost = process.env.RABBITMQ_HOST || 'localhost';
+
 const sendTask = require('./sendTask');
 
 const amqp = require('amqplib');
@@ -39,7 +41,7 @@ module.exports.getTask = (rabbitHost, queueName) => {
             console.log(new Date(), ' [x] Done');
             channel.ack(msg);
             console.log('BODY', body);
-            sendTask.addTask('localhost', 'order-fulfilled', body);
+            sendTask.addTask(rabbitmqHost, 'order-fulfilled', body);
           }, 10000);
         }
       });

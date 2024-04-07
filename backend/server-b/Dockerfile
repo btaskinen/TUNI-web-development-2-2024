@@ -16,4 +16,6 @@ RUN npm install
 
 COPY . .
 
+ENV RABBITMQ_HOST=rabbitmq
+
 CMD [ "node", "index.js" ]

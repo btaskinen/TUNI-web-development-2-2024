@@ -2,9 +2,11 @@
 
 const express = require('express');
 
+const rabbitmqHost = process.env.RABBITMQ_HOST || 'localhost';
+
 let receiveTask = require('./rabbit-utils/receiveTask');
 
-receiveTask.getTask('localhost', 'order-fulfilled');
+receiveTask.getTask(rabbitmqHost, 'order-fulfilled');
 
 var fs = require('fs'),
   path = require('path'),

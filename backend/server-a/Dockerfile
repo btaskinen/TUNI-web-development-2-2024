@@ -20,6 +20,8 @@ RUN npm install
 
 COPY . .
 
+ENV RABBITMQ_HOST=rabbitmq
+
 EXPOSE 8080
 
 CMD [ "node", "index.js" ]
