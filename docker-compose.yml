@@ -87,7 +87,6 @@ services:
 # exposed ports.
 networks:
   backend:
-    driver: bridge
 # If you use databases for storing information, you can define
 # their volumes here.
 # Documentation: https://docs.docker.com/storage/volumes/
