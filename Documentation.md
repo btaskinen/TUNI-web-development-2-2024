@@ -198,6 +198,9 @@ and
 
   - Started to create Dockerfile for Server B [Issue #25](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/25) and docker-compose file [Issue #23](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/23). However, having issues with getting `server-a` and `server-b` containers to connect to rabbitmq container `(Error: connect ECONNREFUSED 127.0.0.1:5672)`. When including the given command in `server-a` and `server-b` services, running the containers fails due to `SyntaxError: Invalid or unexpected token` in `wait-for-it.sh` script.
 
+- **2024-04-07**
+  - Worked on fixing issue with docker-compose.yml files. After giving proper permission to the `wait-for-it.sh` script and giving proper environment variables for the host, I got all the containers up and running. However, I was not able to make any request to server-a using the VS Code REST Client. The request failed with the error `socket hangup`. Will return to this issue later.
+
 ## Learned issues
 
 - **2024-03-29**
