@@ -116,7 +116,15 @@ Uses REST calls to place sandwitch order to Server A and to retrieve available o
 
 _Groups also must document where the components of their system are placed in the repository, and how the course personnel can deploy the group's system on their own computers when testing it._
 
+#### Run RabbitMQ Message Broker
+
+Run RabbitMQ message broker as single docker container.
+
+`docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.13-management`
+
 #### Run Server A
+
+(Important, Rabbit MQ message broker needs to run before Server A can be started)
 
 **To run Server A as development server:<br>**
 
@@ -151,6 +159,7 @@ Run the container from the image in detached mode and expose port 8080:<br>
 #### Run Server B
 
 **To run Server B as development server:<br>**
+(Important, Rabbit MQ message broker needs to run before Server B can be started)
 
 Open terminal and navigate to folder `server-b`.
 <br><br>
@@ -217,7 +226,14 @@ Open address `http://localhost:5173/` in browser.
   - Started to create Dockerfile for Server B [Issue #25](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/25) and docker-compose file [Issue #23](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/23). However, having issues with getting `server-a` and `server-b` containers to connect to rabbitmq container `(Error: connect ECONNREFUSED 127.0.0.1:5672)`. When including the given command in `server-a` and `server-b` services, running the containers fails due to `SyntaxError: Invalid or unexpected token` in `wait-for-it.sh` script.
 
 - **2024-04-07**
+
   - Worked on fixing issue with docker-compose.yml files. After giving proper permission to the `wait-for-it.sh` script and giving proper environment variables for the host, I got all the containers up and running. However, I was not able to make any request to server-a using the VS Code REST Client. The request failed with the error `socket hangup`. Will return to this issue later.
+
+- **2024-04-07**
+  - [Issue #26](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/26)
+    Implemented updating of order status once order has been prepared and is read.<br>
+    Not happy how things are flowing. Functionality is not properly linked to responses from message brocker.<br>
+    Next I will work on the frontend and I hope that through this, thinks in the backend will clear themselves up. Likely what I am missing at the moment is the implementation of web sockets.
 
 ## Learned issues
 
