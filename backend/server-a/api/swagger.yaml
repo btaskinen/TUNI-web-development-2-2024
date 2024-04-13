@@ -89,12 +89,19 @@ paths:
           description: 'Order not found'
       x-swagger-router-controller: 'Order'
     put:
-      tags: -order
+      tags:
+        - 'order'
       summary: Update an order for an sandwich
       operationId: updateOrder
       produces:
         - application/json
       parameters:
+        - name: 'orderId'
+          in: 'path'
+          description: 'ID of the order that needs to be updated'
+          required: true
+          type: 'string'
+          minimum: 1
         - in: body
           name: updated order
           description: update an order for a sandwich
@@ -139,8 +146,6 @@ paths:
           required: true
           schema:
             $ref: '#/definitions/Sandwich'
-      security:
-        - api_key: []
       responses:
         '405':
           description: 'Invalid input'
@@ -161,8 +166,6 @@ paths:
           required: true
           type: 'integer'
           format: 'int64'
-      security:
-        - api_key: []
       responses:
         '200':
           description: 'successful operation'
@@ -195,8 +198,6 @@ paths:
           required: true
           schema:
             $ref: '#/definitions/Sandwich'
-      security:
-        - api_key: []
       responses:
         '405':
           description: 'Invalid input'
@@ -219,8 +220,6 @@ paths:
           required: true
           type: 'integer'
           format: 'int64'
-      security:
-        - api_key: []
       responses:
         '400':
           description: 'Invalid ID supplied'
@@ -362,18 +361,6 @@ paths:
         '404':
           description: 'User not found'
       x-swagger-router-controller: 'User'
-securityDefinitions:
-  sandwichestore_auth:
-    type: 'oauth2'
-    authorizationUrl: 'http://sandwichestore.swagger.io/oauth/dialog'
-    flow: 'implicit'
-    scopes:
-      write:sandwiches: 'modify sandwiches in your account'
-      read:sandwiches: 'read your sandwiches'
-  api_key:
-    type: 'apiKey'
-    name: 'X-API-KEY'
-    in: 'header'
 definitions:
   Order:
     type: 'object'
