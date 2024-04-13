@@ -103,7 +103,7 @@ paths:
           type: 'string'
           minimum: 1
         - in: body
-          name: updated order
+          name: 'updatedOrder'
           description: update an order for a sandwich
           required: true
           schema:

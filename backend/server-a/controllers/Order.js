@@ -29,6 +29,17 @@ module.exports.getOrderById = function getOrderById(req, res, next) {
     });
 };
 
+module.exports.updateOrder = function updateOrder(req, res, next) {
+  var orderId = req.swagger.params['orderId'].value;
+  Order.updateOrder(orderId)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
 module.exports.getOrders = function getOrders(req, res, next) {
   Order.getOrders()
     .then(function (response) {

@@ -4,6 +4,7 @@
 'use strict';
 
 const amqp = require('amqplib');
+const Order = require('../service/OrderService');
 
 module.exports.getTask = (rabbitHost, queueName) => {
   amqp
@@ -24,8 +25,10 @@ module.exports.getTask = (rabbitHost, queueName) => {
         return ok;
 
         function doWork(msg) {
-          const body = JSON.parse(msg.content.toString());
-          console.log(" [x] Received '%s'", body);
+          const bodyJSONString = JSON.parse(msg.content.toString());
+          const bodyObject = JSON.parse(bodyJSONString);
+          Order.updateOrder(bodyObject);
+          console.log(" [x] Received '%s'", bodyJSONString);
           console.log(' [x] Done');
           channel.ack(msg);
         }

@@ -48,6 +48,32 @@ exports.getOrderById = function (orderId) {
 };
 
 /**
+ * Update order status of specific order.
+ * IDs must be positive integers.
+ *
+ * orderId Long ID of the order that needs to be fetched
+ * returns Order
+ **/
+exports.updateOrder = function (orderToUpdate) {
+  console.log('UPDATED ORDER', orderToUpdate.status);
+  return new Promise((resolve, reject) => {
+    const updatedOrder = {
+      sandwichId: orderToUpdate.sandwichId,
+      id: orderToUpdate.id,
+      status: 'ready',
+    };
+
+    const newOrders = orders.map((order) => {
+      if (order.id === updatedOrder.id) return updatedOrder;
+      return order;
+    });
+
+    orders = newOrders;
+    resolve(newOrders);
+  });
+};
+
+/**
  * Get a list of all orders. Empty array if no orders are found.
  *
  * returns ArrayOfOrders
