@@ -16,11 +16,11 @@ let orders = [
  * order Order place an order for a sandwich
  * returns Order
  **/
-exports.addOrder = function (order) {
+exports.addOrder = function (id) {
   return new Promise(function (resolve, reject) {
     const newId = uuidv4();
     const newOrder = {
-      sandwichId: order.sandwichId,
+      sandwichId: id,
       id: newId,
       status: 'received',
     };

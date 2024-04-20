@@ -1,10 +1,10 @@
 import { FC, useState } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import './App.css';
 import { SandwichCard } from './components/SandwichCard';
-import { OrderedSandwich, Sandwich } from './types';
+import { OrderedSandwich, Sandwich, SandwichName, SandwichId } from './types';
 import { sandwiches } from './sandwichData';
-import { getOrderedSandwiches } from './requestFunctions';
+import { getOrderedSandwiches, postSandwichOrder } from './requestFunctions';
 
 export const sandwicheMap: Record<SandwichId, SandwichName> = {
   1: 'Ham & Cheese',
@@ -19,9 +19,16 @@ export const App: FC = () => {
 
   const queryClient = useQueryClient();
 
-  const { status, data, error, isFetching } = useQuery({
+  const { data, isFetching } = useQuery({
     queryKey: ['sandwiches'],
     queryFn: getOrderedSandwiches,
+  });
+
+  const { mutate } = useMutation({
+    mutationFn: postSandwichOrder,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['sandwiches'] });
+    },
   });
 
   if (!isFetching) console.log(data);
@@ -31,6 +38,12 @@ export const App: FC = () => {
       (sandwich) => id === sandwich.sandwichId
     );
     setSandwich(clickedSandwich[0]);
+  };
+
+  const handleOrder = (id: SandwichId) => {
+    console.log('Ordered Sandwich Id', id);
+    mutate(id);
+    setSandwich(null);
   };
 
   const handleClearOrder = () => {
@@ -59,7 +72,9 @@ export const App: FC = () => {
           <div className="App__order">
             <p>{selectedSandwich.name}</p>
             <div className="App__orderButtons">
-              <button>Place Order</button>
+              <button onClick={() => handleOrder(selectedSandwich.sandwichId)}>
+                Place Order
+              </button>
               <button onClick={handleClearOrder}>Clear Order</button>
             </div>
           </div>

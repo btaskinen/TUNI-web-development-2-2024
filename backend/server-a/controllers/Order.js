@@ -7,8 +7,8 @@ const Order = require('../service/OrderService');
 const sendTask = require('../rabbit-utils/sendTask.js');
 
 module.exports.addOrder = function addOrder(req, res, next) {
-  const order = req.swagger.params['order'].value;
-  Order.addOrder(order)
+  const id = Object.keys(req.body);
+  Order.addOrder(id[0])
     .then(function (response) {
       utils.writeJson(res, response);
       sendTask.addTask(rabbitmqHost, 'received-orders', response);

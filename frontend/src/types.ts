@@ -10,12 +10,12 @@ export type SandwichName =
 type OrderStatus = 'ordered' | 'received' | 'InQueue' | 'ready';
 
 export type Sandwich = {
-  sandwichId: number;
+  sandwichId: SandwichId;
   name: string;
 };
 
 export type OrderedSandwich = {
-  sandwichId: number;
+  sandwichId: SandwichId;
   name: string;
   status: OrderStatus;
   id: string;
