@@ -1,0 +1,19 @@
+.SandwichOrder {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: var(--medium-padding);
+}
+
+.SandwichOrder__order {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 50%;
+}
+
+.SandwichOrder__order {
+  display: flex;
+  gap: var(--large-padding);
+}

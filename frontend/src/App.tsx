@@ -1,46 +1,19 @@
 import { FC, useState } from 'react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import './App.css';
 import { SandwichCard } from './components/SandwichCard';
-import { Sandwich, SandwichId } from './types';
+import { Sandwich } from './types';
 import { sandwiches } from './sandwichData';
-import { getOrderedSandwiches, postSandwichOrder } from './requestFunctions';
 import { OrderedSandwichList } from './components/OrderedSandwichList';
+import { SandwichOrder } from './components/SandwichOrder';
 
 export const App: FC = () => {
   const [selectedSandwich, setSandwich] = useState<Sandwich | null>(null);
-
-  const queryClient = useQueryClient();
-
-  const { data, isFetching } = useQuery({
-    queryKey: ['sandwiches'],
-    queryFn: getOrderedSandwiches,
-  });
-
-  const { mutate } = useMutation({
-    mutationFn: postSandwichOrder,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['sandwiches'] });
-    },
-  });
-
-  if (!isFetching) console.log(data);
 
   const handleSandwichClick = (id: number) => {
     const clickedSandwich = sandwiches.filter(
       (sandwich) => id === sandwich.sandwichId
     );
     setSandwich(clickedSandwich[0]);
-  };
-
-  const handleOrder = (id: SandwichId) => {
-    console.log('Ordered Sandwich Id', id);
-    mutate(id);
-    setSandwich(null);
-  };
-
-  const handleClearOrder = () => {
-    setSandwich(null);
   };
 
   return (
@@ -58,22 +31,10 @@ export const App: FC = () => {
           ))}
         </div>
       </div>
-      <div className="App__sandwichOrder">
-        <h3>Sandwich to Order</h3>
-        {selectedSandwich ? (
-          <div className="App__order">
-            <p>{selectedSandwich.name}</p>
-            <div className="App__orderButtons">
-              <button onClick={() => handleOrder(selectedSandwich.sandwichId)}>
-                Place Order
-              </button>
-              <button onClick={handleClearOrder}>Clear Order</button>
-            </div>
-          </div>
-        ) : (
-          <p>No sandwich selected.</p>
-        )}
-      </div>
+      <SandwichOrder
+        selectedSandwich={selectedSandwich}
+        setSandwich={setSandwich}
+      />
       <OrderedSandwichList />
     </div>
   );

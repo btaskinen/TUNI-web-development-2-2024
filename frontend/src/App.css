@@ -51,35 +51,3 @@ button:active {
   display: flex;
   gap: var(--large-padding);
 }
-
-.App__sandwichOrder {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: var(--medium-padding);
-}
-
-.App__order {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 50%;
-}
-
-.App__orderButtons {
-  display: flex;
-  gap: var(--large-padding);
-}
-
-.App__orderedSandwiches {
-  display: flex;
-  flex-direction: column;
-  gap: var(--medium-padding);
-}
-
-.App__orderedSandwichItem {
-  display: flex;
-  justify-content: space-between;
-  padding-bottom: var(--large-padding);
-}
