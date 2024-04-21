@@ -7,7 +7,7 @@ export type SandwichName =
   | 'Tomato & Mozzarella'
   | 'Hummus';
 
-type OrderStatus = 'ordered' | 'received' | 'InQueue' | 'ready';
+export type OrderStatus = 'ordered' | 'received' | 'InQueue' | 'ready';
 
 export type Sandwich = {
   sandwichId: SandwichId;

@@ -7,5 +7,12 @@
 .OrderedSandwich__item {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding-bottom: var(--large-padding);
+}
+
+.OrderedSandwich__status {
+  display: flex;
+  align-items: center;
+  gap: var(--medium-padding);
 }

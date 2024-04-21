@@ -1,8 +1,8 @@
 import { FC } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getOrderedSandwiches } from '../requestFunctions';
-import { sandwicheMap } from '../types';
 import './OrderedSandwichList.css';
+import { OrderedSandwichItem } from './OrderedSandwichItem';
 
 export const OrderedSandwichList: FC = () => {
   const { data, isFetching } = useQuery({
@@ -21,10 +21,7 @@ export const OrderedSandwichList: FC = () => {
       </div>
       {data &&
         data.map((sandwich) => (
-          <div className="OrderedSandwich__item" key={sandwich.id}>
-            <p>{sandwicheMap[sandwich.sandwichId]}</p>
-            <p>{sandwich.status}</p>
-          </div>
+          <OrderedSandwichItem key={sandwich.id} sandwich={sandwich} />
         ))}
       {!data && (
         <div className="OrderedSandwich__item">

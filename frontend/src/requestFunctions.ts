@@ -11,7 +11,13 @@ export const getOrderedSandwiches = async (): Promise<OrderedSandwich[]> => {
 export const postSandwichOrder = async (
   sandwichId: SandwichId
 ): Promise<OrderedSandwich> => {
-  console.log('Requested Sandwich Id', sandwichId);
   const { data } = await axios.post(`${baseUrl}/order`, sandwichId);
+  return data;
+};
+
+export const getSandwichStatus = async (
+  sandwichId: string
+): Promise<OrderedSandwich> => {
+  const { data } = await axios.get(`${baseUrl}/order/${sandwichId}`);
   return data;
 };
