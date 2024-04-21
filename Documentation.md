@@ -110,7 +110,7 @@ For development of Message Broker, run RabbitMQ as docker container with command
 #### Frontend (Client)
 
 React Vite App written in TypeScript.<br>
-Uses REST calls to place sandwitch order to Server A and to retrieve available orders from Server A. Connects to Server A through WebSocket to receive updates on sandwitch status.
+Uses REST calls to place sandwitch order to Server A and to retrieve available orders from Server A. Uses React Query to make requests to Server A. React Query was choosen, since it automatically refetches data when mutations are made, making it easy to keep app data in-sync.
 
 ### How the produced system can be tested
 
@@ -205,9 +205,12 @@ Open address `http://localhost:5173/` in browser.
   - The make-me-a-sandwich Swagger API was updated to use string as id instead of iteger, because uuid library is used to create unique ids for sandwich order
   - Minimal functionality for each /order - endpoint was create where array of orders is stored as a variable.
   - Created Dockerfile to create image of Server A, chose to use image node:21, since this is the same version as installed on my machine.
+  - Learned how to create server stub with Swagger tools. Naively I though this would create a fairly functional server and I was surprised when nothing worked in the beginning. Yet, once I got going, I appreciated how nice base for the server was created by the Swagger tools.
+    Learned to run server as a docker container. Very happy that I succeeded with this, as the whole concept of docker images and containers is difficult to grasp for me.
 - **2024-03-30** Worked through RabbitMQ tutorials 1 - 3 [Issue #11](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/11)
   - tutorials gave a good idea how the message broker should look like.
   - created a sketch of how the message queues are interacting with the servers.
+  - Learned basics of RabbitMQ. Seems to be straight forward. I'm hopeful that I will succeed in implementing the message broker for the project work.
 - **2024-04-01**
   - Implemented Server A publishing sandwich orders to message queue A [Issue #2](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/2)
   - Created Server B [Issue #6](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/6)
@@ -230,15 +233,15 @@ Open address `http://localhost:5173/` in browser.
   - Worked on fixing issue with docker-compose.yml files. After giving proper permission to the `wait-for-it.sh` script and giving proper environment variables for the host, I got all the containers up and running. However, I was not able to make any request to server-a using the VS Code REST Client. The request failed with the error `socket hangup`. Will return to this issue later.
 
 - **2024-04-07**
+
   - [Issue #26](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/26)
     Implemented updating of order status once order has been prepared and is read.<br>
     Not happy how things are flowing. Functionality is not properly linked to responses from message brocker.<br>
     Next I will work on the frontend and I hope that through this, thinks in the backend will clear themselves up. Likely what I am missing at the moment is the implementation of web sockets.
 
-## Learned issues
-
-- **2024-03-29**
-  Learned how to create server stub with Swagger tools. Naively I though this would create a fairly functional server and I was surprised when nothing worked in the beginning. Yet, once I got going, I appreciated how nice base for the server was created by the Swagger tools.
-  Learned to run server as a docker container. Very happy that I succeeded with this, as the whole concept of docker images and containers is difficult to grasp for me.
-- **2024-03-30**
-  Learned basics of RabbitMQ. Seems to be straight forward. I'm hopeful that I will succeed in implementing the message broker for the project work.
+- **2024-04-20**
+  - [Issue #16](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/16) and [Issue #15](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/15)<br>
+    Implemented frontend UI and connected the frontend to Server A. Frontend suggessfully sends sandwich orders to ServerA and gets list of placed orders from Server A.<br>
+    Learned how to use React Query.
+- **2024-04-21**
+  Started working on [Issue #17](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/17). Refactored App component into smaller components that candle specific functionality. Started setting up the application so that the user can request an updated status of the sandwich order.
