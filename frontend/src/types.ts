@@ -20,3 +20,11 @@ export type OrderedSandwich = {
   status: OrderStatus;
   id: string;
 };
+
+export const sandwicheMap: Record<SandwichId, SandwichName> = {
+  1: 'Ham & Cheese',
+  2: 'Salami',
+  3: 'Tuna',
+  4: 'Tomato & Mozzarella',
+  5: 'Hummus',
+};

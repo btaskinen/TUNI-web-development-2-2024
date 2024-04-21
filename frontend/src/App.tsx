@@ -2,17 +2,10 @@ import { FC, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import './App.css';
 import { SandwichCard } from './components/SandwichCard';
-import { OrderedSandwich, Sandwich, SandwichName, SandwichId } from './types';
+import { Sandwich, SandwichId } from './types';
 import { sandwiches } from './sandwichData';
 import { getOrderedSandwiches, postSandwichOrder } from './requestFunctions';
-
-export const sandwicheMap: Record<SandwichId, SandwichName> = {
-  1: 'Ham & Cheese',
-  2: 'Salami',
-  3: 'Tuna',
-  4: 'Tomato & Mozzarella',
-  5: 'Hummus',
-};
+import { OrderedSandwichList } from './components/OrderedSandwichList';
 
 export const App: FC = () => {
   const [selectedSandwich, setSandwich] = useState<Sandwich | null>(null);
@@ -65,7 +58,6 @@ export const App: FC = () => {
           ))}
         </div>
       </div>
-
       <div className="App__sandwichOrder">
         <h3>Sandwich to Order</h3>
         {selectedSandwich ? (
@@ -82,25 +74,7 @@ export const App: FC = () => {
           <p>No sandwich selected.</p>
         )}
       </div>
-      <div className="App__orderedSandwiches">
-        <h3>Ordered Sandwiches</h3>
-        <div className="App__orderedSandwichItem">
-          <p>Sandwich</p>
-          <p>Status</p>
-        </div>
-        {data &&
-          data.map((sandwich) => (
-            <div className="App__orderedSandwichItem" key={sandwich.id}>
-              <p>{sandwicheMap[sandwich.sandwichId]}</p>
-              <p>{sandwich.status}</p>
-            </div>
-          ))}
-        {!data && (
-          <div className="App__orderedSandwichItem">
-            <p>No ordered sandwiches.</p>
-          </div>
-        )}
-      </div>
+      <OrderedSandwichList />
     </div>
   );
 };

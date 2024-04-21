@@ -1,0 +1,11 @@
+.OrderedSandwiches {
+  display: flex;
+  flex-direction: column;
+  gap: var(--medium-padding);
+}
+
+.OrderedSandwich__item {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: var(--large-padding);
+}
