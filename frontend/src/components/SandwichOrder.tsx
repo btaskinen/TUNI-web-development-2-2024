@@ -12,7 +12,7 @@ type Props = {
 export const SandwichOrder: FC<Props> = ({ selectedSandwich, setSandwich }) => {
   const queryClient = useQueryClient();
 
-  const { mutate } = useMutation({
+  const { mutate, error, isPending } = useMutation({
     mutationFn: postSandwichOrder,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['sandwiches'] });
@@ -32,7 +32,7 @@ export const SandwichOrder: FC<Props> = ({ selectedSandwich, setSandwich }) => {
   return (
     <div className="SandwichOrder">
       <h3>Sandwich to Order</h3>
-      {selectedSandwich ? (
+      {selectedSandwich && (
         <div className="SandwichOrder__order">
           <p>{selectedSandwich.name}</p>
           <div className="SandwichOrder__buttons">
@@ -42,9 +42,12 @@ export const SandwichOrder: FC<Props> = ({ selectedSandwich, setSandwich }) => {
             <button onClick={handleClearOrder}>Clear Order</button>
           </div>
         </div>
-      ) : (
+      )}
+      {!selectedSandwich && !error && !isPending && (
         <p>No sandwich selected.</p>
       )}
+      {isPending && <p>Order is being processed...</p>}
+      {error && <p>{error.message}</p>}
     </div>
   );
 };

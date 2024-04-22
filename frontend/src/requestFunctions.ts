@@ -15,13 +15,21 @@ export const getOrderedSandwiches = async (): Promise<OrderedSandwich[]> => {
 export const postSandwichOrder = async (
   sandwichId: SandwichId
 ): Promise<OrderedSandwich> => {
-  const { data } = await axios.post(`${baseUrl}/order`, sandwichId);
-  return data;
+  try {
+    const { data } = await axios.post(`${baseUrl}/order`, sandwichId);
+    return data;
+  } catch (error) {
+    throw new Error('Something went wrong');
+  }
 };
 
 export const getSandwichStatus = async (
   sandwichId: string
 ): Promise<OrderedSandwich> => {
-  const { data } = await axios.get(`${baseUrl}/order/${sandwichId}`);
-  return data;
+  try {
+    const { data } = await axios.get(`${baseUrl}/order/${sandwichId}`);
+    return data;
+  } catch (error) {
+    throw new Error('Something went wrong.');
+  }
 };
