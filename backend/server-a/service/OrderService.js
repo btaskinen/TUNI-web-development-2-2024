@@ -2,13 +2,7 @@
 
 const { v4: uuidv4 } = require('uuid');
 
-let orders = [
-  {
-    sandwichId: 5,
-    id: '83e26eac-aaaf-459e-88ac-712ad836f7dd',
-    status: 'ready',
-  },
-];
+let orders = [];
 
 /**
  * Add an order for an sandwich
@@ -80,10 +74,6 @@ exports.updateOrder = function (orderToUpdate) {
  **/
 exports.getOrders = function () {
   return new Promise(function (resolve, reject) {
-    if (Object.keys(orders).length > 0) {
-      resolve(orders);
-    } else {
-      resolve('No orders');
-    }
+    resolve(orders);
   });
 };

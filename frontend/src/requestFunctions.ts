@@ -4,8 +4,12 @@ import { OrderedSandwich, SandwichId } from './types';
 const baseUrl = 'http://localhost:8080/v1';
 
 export const getOrderedSandwiches = async (): Promise<OrderedSandwich[]> => {
-  const { data } = await axios.get(`${baseUrl}/order`);
-  return data;
+  try {
+    const { data } = await axios.get(`${baseUrl}/order`);
+    return data;
+  } catch (error) {
+    throw new Error('Something went wrong');
+  }
 };
 
 export const postSandwichOrder = async (
