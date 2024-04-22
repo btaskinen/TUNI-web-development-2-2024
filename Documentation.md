@@ -197,6 +197,16 @@ Start the development server:<br>
 
 Open address `http://localhost:5173/` in browser.
 
+**Create Docker image and run Frontend as Docker container:**<br>
+
+Build the image with command, giving it the tag 'frontend':<br>
+
+`docker build . -t frontend`
+
+Run the container from the image in detached mode and expose port 5173:<br>
+
+`docker run -d -p 5173:5173 frontend`
+
 ## Learning Diary
 
 - **2024-03-23** Created issues based on [Group Project description](https://moodle.tuni.fi/pluginfile.php/4170962/mod_label/intro/Group%20project.pdf?time=1709636527702)
@@ -244,4 +254,7 @@ Open address `http://localhost:5173/` in browser.
     Implemented frontend UI and connected the frontend to Server A. Frontend suggessfully sends sandwich orders to ServerA and gets list of placed orders from Server A.<br>
     Learned how to use React Query.
 - **2024-04-21**
-  Started working on [Issue #17](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/17). Refactored App component into smaller components that candle specific functionality. Started setting up the application so that the user can request an updated status of the sandwich order.
+  - Started working on [Issue #17](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/17). Refactored App component into smaller components that candle specific functionality. Started setting up the application so that the user can request an updated status of the sandwich order.
+- **2024-04-22**
+  - Finalized [Issue #17](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/17). Status of order is updated by resending request at 1s intervalls until status is 'ready'. Plan to use WebSockets for status updates was abandond due to time inexperience with WebSockets and time constrains.
+  - [Issue #18](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/18). Created Dockerfile to build docker image and create docker container of the frontend.
