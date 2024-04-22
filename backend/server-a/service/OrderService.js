@@ -6,7 +6,7 @@ let orders = [
   {
     sandwichId: 5,
     id: '83e26eac-aaaf-459e-88ac-712ad836f7dd',
-    status: 'ordered',
+    status: 'ready',
   },
 ];
 

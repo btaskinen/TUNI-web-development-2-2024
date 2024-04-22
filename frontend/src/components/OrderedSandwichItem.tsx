@@ -1,6 +1,6 @@
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { OrderedSandwich, sandwicheMap, OrderStatus } from '../types';
-import './OrderedSandwichItem.css';
+import { getSandwichStatus } from '../requestFunctions';
 
 type Props = {
   sandwich: OrderedSandwich;
@@ -9,10 +9,22 @@ type Props = {
 export const OrderedSandwichItem: FC<Props> = ({ sandwich }) => {
   const [sandwichSatus, setStatus] = useState<OrderStatus>(sandwich.status);
 
-  const handleStatusRequest = (id: string) => {
-    console.log('request status', id);
-    setStatus(sandwich.status);
+  const handleStatusRequest = async (id: string) => {
+    const result = await getSandwichStatus(id);
+    setStatus(result.status);
   };
+
+  useEffect(() => {
+    const timerId = setInterval(() => {
+      handleStatusRequest(sandwich.id);
+    }, 1000);
+
+    if (sandwichSatus === 'ready') {
+      clearInterval(timerId);
+    }
+
+    return () => clearInterval(timerId);
+  }, [sandwich.id, sandwichSatus]);
 
   return (
     <div className="OrderedSandwich__item" key={sandwich.id}>
