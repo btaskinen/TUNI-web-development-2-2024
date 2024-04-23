@@ -81,6 +81,15 @@ services:
   # databases
   # database-service would go here.
   #database:
+  frontend:
+    image: groupbt/frontend
+    build:
+      dockerfile: Dockerfile
+      context: ./frontend
+    ports:
+      - '5173:5173'
+    networks:
+      - backend
 
 # Here we create a named network, that all the backend components
 # must be added to for them to be able to communicate through

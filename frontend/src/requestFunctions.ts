@@ -1,7 +1,12 @@
 import axios from 'axios';
 import { OrderedSandwich, SandwichId } from './types';
+import { apiUrl } from './config';
 
-const baseUrl = 'http://localhost:8080/v1';
+console.log(apiUrl);
+
+const baseUrl = `${apiUrl}/v1`;
+
+console.log(baseUrl);
 
 export const getOrderedSandwiches = async (): Promise<OrderedSandwich[]> => {
   try {
