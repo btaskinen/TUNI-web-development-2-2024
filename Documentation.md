@@ -110,7 +110,9 @@ For development of Message Broker, run RabbitMQ as docker container with command
 #### Frontend (Client)
 
 React Vite App written in TypeScript.<br>
-Uses REST calls to place sandwitch order to Server A and to retrieve available orders from Server A. Uses React Query to make requests to Server A. React Query was choosen, since it automatically refetches data when mutations are made, making it easy to keep app data in-sync.
+Uses REST POST requests to `http:localhost:8080/v1/order` to place sandwich order to Server A and to GET request to `http://localhost:8080/v1/order` to retrieve available orders from Server A. The app uses polling strategy to send GET requests to `http://localhost:8080/v1/order/{orderId}` every second to check order status. Once order status is 'ready', the polling stops. User can also manually request status update by clicking 'Check status'-button.
+
+Uses React Query to make requests to Server A. React Query was choosen, since it automatically refetches data when mutations are made, making it easy to keep app data in-sync.
 
 ### How the produced system can be tested
 
@@ -128,7 +130,7 @@ Run RabbitMQ message broker as single docker container.
 
 **To run Server A as development server:<br>**
 
-Open terminal and navigate to folder `server-a`.
+Open terminal and navigate to folder `backend/server-a`.
 <br><br>
 Run server with commands:<br>
 
@@ -148,7 +150,7 @@ and
 
 **Create Docker image and run Server A as Docker container:**<br>
 
-Build the server with command, giving it the tag 'server-a':<br>
+Build the server with command, giving it the tag 'server-a' (run command from folder `backend/server-a`):<br>
 
 ` docker build -t server-a .`
 
@@ -158,10 +160,11 @@ Run the container from the image in detached mode and expose port 8080:<br>
 
 #### Run Server B
 
-**To run Server B as development server:<br>**
 (Important, Rabbit MQ message broker needs to run before Server B can be started)
 
-Open terminal and navigate to folder `server-b`.
+**To run Server B as development server:<br>**
+
+Open terminal and navigate to folder `backend/server-b`.
 <br><br>
 Run server with commands:<br>
 
@@ -199,13 +202,25 @@ Open address `http://localhost:5173/` in browser.
 
 **Create Docker image and run Frontend as Docker container:**<br>
 
-Build the image with command, giving it the tag 'frontend':<br>
+Build the image with command, giving it the tag 'frontend' (run command from folder `frontend`):<br>
 
 `docker build . -t frontend`
 
 Run the container from the image in detached mode and expose port 5173:<br>
 
 `docker run -d -p 5173:5173 frontend`
+
+Open address `http://localhost:5173/` in browser to use frontend.
+
+### Run whole application
+
+From the root folder (groupbt), run command:
+
+`docker compose up -d`
+
+This will create images and run the containers for the frontend and backend.
+
+Open address `http://localhost:5173/` in browser to use frontend.
 
 ## Learning Diary
 
@@ -258,3 +273,5 @@ Run the container from the image in detached mode and expose port 5173:<br>
 - **2024-04-22**
   - Finalized [Issue #17](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/17). Status of order is updated by resending request at 1s intervalls until status is 'ready'. Plan to use WebSockets for status updates was abandond due to time inexperience with WebSockets and time constrains.
   - [Issue #18](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/18). Created Dockerfile to build docker image and create docker container of the frontend.
+- **2024-04-24**
+  - Completed [Issue #23](https://course-gitlab.tuni.fi/compcs510-spring2024/groupbt/-/issues/23). Added frontend to the docker-compose.yml file. Whole application can now be run running the docker-compose.yml file.
