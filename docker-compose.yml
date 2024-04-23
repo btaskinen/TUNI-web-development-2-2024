@@ -27,7 +27,7 @@ services:
       dockerfile: Dockerfile
       context: ./backend/server-a
     ports:
-      - '8080:12345'
+      - '8080:8080'
     networks:
       - backend
 
