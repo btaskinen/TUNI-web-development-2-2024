@@ -4,8 +4,7 @@
 
 ### Group Information
 
-**Group Member**<br>
-Barbara Taskinen<br>
+**Group Member:** Barbara Taskinen<br>
 **Email:** barbara.taskinen@tuni.fi<br>
 **Student ID:** tuni.fi:K80453<br>
 
@@ -14,27 +13,38 @@ Barbara Taskinen<br>
 
 ### Working during the project
 
-Group Member Barbara Taskinen will commit 4 - 6 hours per week to the project. As Barbara is the only group member, she will be responsible for the implementations for all the components of the application.
+Group Member Barbara Taskinen will commit 4 - 6 hours per week to the project. As Barbara is the only group member, she will be responsible for the implementations of all the components of the application.
 
-Initially, 23 issues were created in GitLab, based on the projected description. Likely, more issues will be added when to project progresses. Each issue was given an estimated due date for completion to ensure that the work is evenly spread out over the availiable time frame.
+Initially, 23 issues were created in GitLab, based on the projected description. Three more issues were added during the project. Each issue was given an estimated due date for completion to ensure that the work is evenly spread out over the availiable time frame. Most issues were completed within the given deadline. However, issues related to implementing a database for Server A to store the sandwich order were left undone due to time constraints.
 
 ## Documentation of the created system
 
 ### System architecture
 
+_Broad overview of the system architecture. Detailed information about each component of the system is provided in **Used technologies**._
+
 ```mermaid
 flowchart LR
     A(Frontend) -->|POST /order| B(Server A)
     A --> |GET /order| B
+    B --> |response POST /order| A
     B --> |response GET /order & GET /order/orderId| A
-    B --> |sandwitch status| A
     B --> |sandwitch order| C(Message Broker)
-    B --> |store sandwitch order| E(Database)
-    E --> |retrieve sandwitch order|B
+    B -.-> |store sandwitch order| E(Database)
+    E -.-> |retrieve sandwitch order|B
     C --> |sandwitch status| B
     C -->|sandwitch order| D[Server B]
     D -->|sandwitch status| C
+    style E fill:#ddd,stroke:#aaa,color:#fff,stroke-dasharray: 5 5
 ```
+
+- Frontend sends REST requests to Server A, either placing a sandwich order with POST request to /order endpoint or fetching all the sandwich orders with GET request to endpoint /order or a specific sandwich order with GET request to endpoint /order/{orderId}.
+- Server A creates id for order, stores the order in its "database" and sends message to Message Broker via Message Queue "received-orders".
+- Message Broker relays message from Message Queue "received-orders" to Server B.
+- Server B acknowledges the receiving of the sandwich order and "makes" the sandwich. When sandwich is done, it sends sandwich order with updated status through Message Queue 'order-fulfilled' to the Message Broker.
+- Message Broker forwards Message Queue 'order-fulfilled' message about updated sandwich status to Server A.
+- Server A updates status of sandwich order in "database".
+- Frontend polls Server A to receive status updates of sandwich order.
 
 ### Used technologies
 
@@ -52,27 +62,28 @@ Description of API endpoints:
 - GET /order:
   Returns all orders<br>
 - GET /order/{orderId}:
-  Returns order with given `id`.
+  Returns order with given orderId `id`.
 - POST /order:
   request body:
 
   ```
   {
-    sandwichId: 8,
-    status: 'ordered',
+    sandwichId: 1,
   }
   ```
 
-  Curently, `id` property is added by addOrder function. Later, creation of id will be moved to database.<br>
+  The property `sandwichId` represents the type of sandwich (e.i. Ham & Cheese, Tuna, Hummus...).
 
-  Receives REST API requests from Frontend about new orders placed and respondes to Frontend request with available sandwitch orders. Server A is connected to Frontend via WebSocket to publish updates about sandwitch status.
-  When Server A receives new order from Frontend, sandwitch order is stored in database and sends message to Message Queue "received-orders".
+  Once Server A receives the sandwich order from the Frontend through the POST request to /order, calling function `addOrder` it creates an Universally Unique Identifier with the help of the `uuid` library. The created `id` is of type string. Furthermore, `addOrder` function adds status property to sandwich order object, which value is of value 'received', 'InQueue' or 'ready'. The `addOrder` function then saves the sandwich order in the "database".<br>
+
+  Server A sends message to Message Queue "received-orders".
   Server A listens to Message Queue "order-fulfilled" to receive information about completed order.
 
 #### Database
 
-MongoDB database.<br>
-Stores all the order Server A has received.
+Database was not implemented. In Server A stores the sandwich order in an array of sandwich orders. The data is non-persistant and is lost when Server A is stopped.
+
+Ideally, sandwich orders would have been stored in MongoDB database to allow for data persistance.
 
 #### Server B
 
