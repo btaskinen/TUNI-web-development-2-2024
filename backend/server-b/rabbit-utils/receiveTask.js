@@ -35,12 +35,9 @@ module.exports.getTask = (rabbitHost, queueName) => {
         function doWork(msg) {
           let body = msg.content.toString();
           console.log(" [x] Received '%s'", body);
-          let secs = body.split('.').length - 1;
-          //console.log(" [x] Task takes %d seconds", secs);
           setTimeout(() => {
             console.log(new Date(), ' [x] Done');
             channel.ack(msg);
-            console.log('BODY', body);
             sendTask.addTask(rabbitmqHost, 'order-fulfilled', body);
           }, 10000);
         }
