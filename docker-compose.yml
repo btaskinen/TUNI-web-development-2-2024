@@ -9,39 +9,27 @@
 
 version: '3'
 
+# services describes the different microservices that are build with the docker-compose file.
 services:
-  # An example configuration of server A for groups' convenience.
-  # server-a is based on the Docker image the groups produce and build themselves.
   server-a:
-    # Change the image information to match your server A image
+    # Server A image is build from Dockerfile found in folder groupbt/server-a
     image: groupbt/server-a
-    # 'depends_on' and 'command' are  to be used when used
-    # with RabbitMQ service in this file. 'depends_on' must be set
-    # to RabbitMQ service's name from this file, and 'command'
-    # can be modified to be anything, but what is given should
-    # work. Just uncomment them
+    # 'depends_on' tells docker that Server A depends on the message broker rabbitmq and that the message broker needs
+    # to run before Server A can be started. The wait-for-it.sh ensures that this is the case.
     depends_on:
       - rabbitmq
     command: ['./utils/wait-for-it.sh', 'rabbitmq:5672', '--', 'npm', 'start']
+    # Build command instructs to build Server A from Dockerfle in folder ./backend/server-a.
     build:
       dockerfile: Dockerfile
       context: ./backend/server-a
+    # Ports of the container that are exposed.
     ports:
       - '8080:8080'
+    # Server A is part of the network 'backend'.
     networks:
       - backend
 
-  # You can base this service on a rabbitmq Docker Hub image.
-  # You need to expose the RabbitMQ port to other containers
-  # in this  docker-compose.yml
-  # A set of needed Docker instructions like 'image:' are shown
-  # below, groups should set their values. Groups are free to
-  # CRUD the set of instructions as they see fit.
-  # rapid-runner-rabbit:
-  #   image:
-  #   ports:
-  #   expose:
-  #   networks:
   rabbitmq:
     # set lates rabbitmq image
     image: rabbitmq:3.13-management
@@ -55,14 +43,10 @@ services:
     volumes:
       - ~/.docker.conf/rabbitmq/data/:/var/lib/rabbitmq/
       - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq/
+    # Network the Message Broker is part of
     networks:
       - backend
-  # much of the server-b service entry can be copied from server-a
-  # service above. server-b directory Dockerfile has more
-  # information.
-  # A set of needed Docker instructions like 'image:' are shown
-  # below, groups should set their values. Groups are free to
-  # CRUD this set of instructions as they see fit.
+  # Instruction for building Server B are analogous to instructions for Server A.
   server-b:
     image: groupbt/server-b
     depends_on:
@@ -73,16 +57,9 @@ services:
       context: ./backend/server-b
     networks:
       - backend
-
-  # Your group might want to use a database to store some data
-  # You can use any database you wish, PostgreSQL, MySQL and
-  # MongoDB have rather good Docker documentation and examples.
-  # But some groups could find a way to do this without
-  # databases
-  # database-service would go here.
-  #database:
   frontend:
     image: groupbt/frontend
+    # Build command instructs to build fronten from Dockerfle in folder ./frontend.
     build:
       dockerfile: Dockerfile
       context: ./frontend
@@ -96,9 +73,3 @@ services:
 # exposed ports.
 networks:
   backend:
-# If you use databases for storing information, you can define
-# their volumes here.
-# Documentation: https://docs.docker.com/storage/volumes/
-# Personally I like to look at the database's image's Dockerfile
-# in the Docker Hub to see what directory it uses to store data.
-# volumes:
