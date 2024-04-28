@@ -7,8 +7,7 @@ let orders = [];
 /**
  * Add an order for an sandwich
  *
- * order Order place an order for a sandwich
- * returns Order
+ * Unique id is created using uuid library. Orders are stored in orders array.
  **/
 exports.addOrder = function (id) {
   return new Promise(function (resolve, reject) {
@@ -25,10 +24,6 @@ exports.addOrder = function (id) {
 
 /**
  * Find an order by its ID
- * IDs must be positive integers
- *
- * orderId Long ID of the order that needs to be fetched
- * returns Order
  **/
 exports.getOrderById = function (orderId) {
   return new Promise(function (resolve, reject) {
@@ -43,10 +38,6 @@ exports.getOrderById = function (orderId) {
 
 /**
  * Update order status of specific order.
- * IDs must be positive integers.
- *
- * orderId Long ID of the order that needs to be fetched
- * returns Order
  **/
 exports.updateOrder = function (orderToUpdate) {
   console.log('UPDATED ORDER', orderToUpdate.status);
