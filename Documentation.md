@@ -123,8 +123,8 @@ Message broker with two message queues: "received-orders" and "order-fulfilled":
 ```mermaid
 flowchart LR
     A(Server A)
-    C(Message Queue "received-orders")
-    D(Message Queue "order-fulfilled")
+    C(Message Queue received-orders)
+    D(Message Queue order-fulfilled)
     B(Server B)
     A --> |status = received| C
     C --> |status = inQueue| A
