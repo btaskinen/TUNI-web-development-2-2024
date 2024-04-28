@@ -15,7 +15,7 @@
 
 Group Member Barbara Taskinen will commit 4 - 6 hours per week to the project. As Barbara is the only group member, she will be responsible for the implementations of all the components of the application.
 
-Initially, 23 issues were created in GitLab, based on the projected description. Three more issues were added during the project. Each issue was given an estimated due date for completion to ensure that the work is evenly spread out over the availiable time frame. Most issues were completed within the given deadline. However, issues related to implementing a database for Server A to store the sandwich order were left undone due to time constraints.
+Initially, 23 issues were created in GitLab, based on the project description. Three more issues were added during the project. Each issue was given an estimated due date for completion to ensure that the work is evenly spread out over the availiable time frame. Most issues were completed within the given deadline. However, issues related to implementing a database for Server A to store the sandwich order were left undone due to time constraints.
 
 ## Documentation of the created system
 
@@ -48,22 +48,23 @@ flowchart LR
 
 ### Used technologies
 
-#### "Make me a Sandwitch" Swagger API
-
-Provided by course personnel.<br>
-Provides the base for Server A.
-
 #### Server A
 
+The code for Server A can be found from `/backend/server-a`.
+
+Server A is a Nodejs server and is based on the pre-defined Swagger API ["Make me a sandwich"](https://app.swaggerhub.com/apis/minimalistIndustries/make-me-a-sandwich/1.1.0), which was provided by the course personnel. It was implemented by downloading the Nodejs server stub from the Swagger API.<br>
 The server uses the Express Node web framework and runs as an Express Web Application.<br>
 <br>
-Description of API endpoints:
+
+**Description of API endpoints:**
 
 - GET /order:
   Returns all orders<br>
 - GET /order/{orderId}:
   Returns order with given orderId `id`.
 - POST /order:
+  Places a sandwich order to Server A.
+  <br>
   request body:
 
   ```
@@ -74,56 +75,85 @@ Description of API endpoints:
 
   The property `sandwichId` represents the type of sandwich (e.i. Ham & Cheese, Tuna, Hummus...).
 
-  Once Server A receives the sandwich order from the Frontend through the POST request to /order, calling function `addOrder` it creates an Universally Unique Identifier with the help of the `uuid` library. The created `id` is of type string. Furthermore, `addOrder` function adds status property to sandwich order object, which value is of value 'received', 'InQueue' or 'ready'. The `addOrder` function then saves the sandwich order in the "database".<br>
+- PUT /order/{orderId}:
+  This endpoint was implemented to be able to update the status of a sandwich order.
 
-  Server A sends message to Message Queue "received-orders".
-  Server A listens to Message Queue "order-fulfilled" to receive information about completed order.
+Once Server A receives the sandwich order from the Frontend through the POST request to /order, calling function `addOrder` it creates an Universally Unique Identifier with the help of the `uuid` library. The created `id` is of type string. Furthermore, `addOrder` function adds status property to sandwich order object, which value is of value 'received', 'InQueue' or 'ready'. The `addOrder` function then saves the sandwich order in the "database".<br>
+
+After saving the order, Server A sends message to Message Broker's Message Queue "received-orders". Upon receiving acknowledgement from Message Broker. Order status is changed to 'In Queue'. Server A uses the amqplib library for communication with the Message Broker via the AMQP 0-9-1 protocol.
+
+Server A listens to Message Broker's Message Queue "order-fulfilled" by calling function `getTask` to receive information about completed order. Once it receives a message from the Message Broker, it updates the status of the received order to 'ready' by calling the `updateOrder` function.
+
+**_Limitation:_**
+
+- _Little attention was paid to error handling and thus there is big room for improvement._
+- _Unit testing of Server A functions is missing. During development, requests to Server A were tested using REST Client for Visual Studio extension._
 
 #### Database
 
-Database was not implemented. In Server A stores the sandwich order in an array of sandwich orders. The data is non-persistant and is lost when Server A is stopped.
+Database was not implemented. Server A stores the sandwich order in an array of sandwich orders. The data is non-persistant and is lost when Server A is stopped.
 
-Ideally, sandwich orders would have been stored in MongoDB database to allow for data persistance.
+Ideally, sandwich orders would have been stored in MongoDB database to allow for data persistance. A noSQL database is a good choice as it has less overhead than SQL databases and is better for unstructured data like JSON, which is used in this application to store data.
 
 #### Server B
 
-Node.js server.<br>
-Server B is very simplistic. It simply runs a function that listens to the RabbitMQ message queue "received-orders" which handles the received sandwich orders. If a sandwitch order is received, Server B will "make" the sandwich, and after it finished "making" the sandwich (after a 10s wait), it will send message to the message queue "order-fulfilled", to inform about the fulfillment of the order.
+Code for Server B can be found from `/backend/server-b`.
+
+Server B is a Nodejs server. It uses the amqplib to communicate via the AMQP 0-9-1 protocol with the Message Broker.<br>
+Server B is very simplistic. It simply runs the function `getTask` that listens to the Message Broker's message queue "received-orders" which handles the received sandwich orders. If a sandwitch order is received, Server B will "make" the order and after it finished "making" the sandwich (after a 10s timeout), it will send message to the message queue "order-fulfilled", to inform about the fulfillment of the order.
+
+**_Possible further implementations:_**
+
+- _the timeout time could be set based on sandwichId. Some sandwiches take longer to make than others._
 
 #### Message Broker
 
-RabbitMQ.<br>
-Message broker with two message queues.<br>
+RabbitMQ is used as a Message Broker.<br>
 
-- Server A send sandwich order to Message Queue 1. At this point, status of order is `received`.
-- Message Queue 1 acknowledges reception of task from Server A. At this point, status of order is `inQueue`.
-- Message Queue 1 sends task to Server B.
-- Server B processes order. When order is ready, Server B sends message to Message Queue 2 with either status `ready` or `fail`.
-- Message Queue 2 sends `ready` or `fail` message to Server A.
+Message broker with two message queues: "received-orders" and "order-fulfilled":<br>
+
+- Server A send sandwich order to Message Queue "received-orders". At this point, status of order is `received`.
+- Message Queue "received-orders" acknowledges reception of task from Server A. At this point, status of order is `inQueue`.
+- Message Queue "received-orders" sends task to Server B.
+- Server B receives message from Message Queue "received-orders" and processes order.
+- When order is ready, Server B sends message to Message Queue "order-fulfilled" with either status `ready` or `fail`.
+- Message Queue "order-fulfilled" sends `ready` or `fail` message to Server A.
 - Status of order is updated to either `ready` or `fail`.
 
 ```mermaid
 flowchart LR
     A(Server A)
-    C(Message Queue 1)
-    D(Message Queue 2)
+    C(Message Queue "received-orders")
+    D(Message Queue "order-fulfilled")
     B(Server B)
     A --> |status = received| C
     C --> |status = inQueue| A
     C --> |status = inQueue| B
-    B --> |satus = ready| D
+    B --> |satus = ready / failed| D
     D --> |satus = ready / failed| A
 ```
 
-For development of Message Broker, run RabbitMQ as docker container with command:<br>
+Message Broker is run from a ready available docker image.
+
+Docker container from the image was created and run with the following command:<br>
+
 `docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.13-management`
 
 #### Frontend (Client)
 
 React Vite App written in TypeScript.<br>
-Uses REST POST requests to `http:localhost:8080/v1/order` to place sandwich order to Server A and to GET request to `http://localhost:8080/v1/order` to retrieve available orders from Server A. The app uses polling strategy to send GET requests to `http://localhost:8080/v1/order/{orderId}` every second to check order status. Once order status is 'ready', the polling stops. User can also manually request status update by clicking 'Check status'-button.
 
-Uses React Query to make requests to Server A. React Query was choosen, since it automatically refetches data when mutations are made, making it easy to keep app data in-sync.
+User can select from five pre-defined sandwiches and order one sandwich at a time. Placed orders are displayed in a list informing about their order status.
+
+Frontend uses REST POST requests to `http:localhost:8080/v1/order` to place sandwich order to Server A and GET request to `http://localhost:8080/v1/order` to retrieve available orders from Server A. The app uses polling strategy to send GET requests to `http://localhost:8080/v1/order/{orderId}` every second to check order status. Once order status is 'ready', the polling stops. User can also manually request status update from a specific sandwich by clicking 'Check status'-button, which will send GET request to `http://localhost:8080/v1/order/{orderId}`.
+
+Uses Axios and React Query libraries to make requests to Server A. React Query was choosen, since it automatically refetches data when mutations are made, making it easy to keep app data in-sync.
+
+**_Missing and possible further implementations:_**
+
+- _End to end testing missing. Testing would be implemented using Cypress testing framework._
+- _Better error handling. Currently, user is only informed that "Something went wrong". This message could be more informative and based on the error at hand. But of course, this would require better error handling in Server A._
+- _User can build their own sandwich based on a selection of different ingredients_
 
 ### How the produced system can be tested
 
@@ -131,7 +161,7 @@ _Groups also must document where the components of their system are placed in th
 
 #### Run RabbitMQ Message Broker
 
-Run RabbitMQ message broker as single docker container.
+Run RabbitMQ Message Broker as single docker container from the image rabbitmq:3.13-management.
 
 `docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.13-management`
 
@@ -139,7 +169,7 @@ Run RabbitMQ message broker as single docker container.
 
 (Important, Rabbit MQ message broker needs to run before Server A can be started)
 
-**To run Server A as development server:<br>**
+**To run Server A on local machine server:<br>**
 
 Open terminal and navigate to folder `backend/server-a`.
 <br><br>
@@ -151,7 +181,12 @@ and
 <br>
 `npm start`
 
+**To run Server A as development server:<br>**
+
+Open terminal and navigate to folder `backend/server-a`.
+
 Run server in development mode on local machine with commands:<br>
+_(uses nodemon to allow for automatic restart of server after changes)_
 
 `npm install`
 <br>
@@ -173,7 +208,7 @@ Run the container from the image in detached mode and expose port 8080:<br>
 
 (Important, Rabbit MQ message broker needs to run before Server B can be started)
 
-**To run Server B as development server:<br>**
+**To run Server B on local machine:<br>**
 
 Open terminal and navigate to folder `backend/server-b`.
 <br><br>
@@ -185,7 +220,12 @@ and
 <br>
 `npm start`
 
+**To run Server B as development server:<br>**
+
+Open terminal and navigate to folder `backend/server-b`.
+<br><br>
 Run server in development mode on local machine with commands:<br>
+_(uses nodemon to allow for automatic restart of server after changes)_
 
 `npm install`
 <br>
