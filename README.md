@@ -8,10 +8,20 @@ The pdf-file `group_work_description.pdf` describes the assignment in detail.
 
 Starter code for the servers was provided by the course personel to get the project started. The project was completed as a solo work.
 
-To run the application, rfom the root folder (groupbt), run command:
+To run the application, from the root folder (groupbt), run command:
 
 `docker compose up -d`
 
 This will create images and run the containers for the frontend and backend.
 
 Open address `http://localhost:5173/` in browser to use frontend.
+
+---
+
+## Demo
+
+
+https://github.com/user-attachments/assets/c91ad4f4-5625-49d1-9fff-ebab0abaa27f
+
+
+
