@@ -23,20 +23,7 @@ Initially, 23 issues were created in GitLab, based on the project description. T
 
 _Broad overview of the system architecture. Detailed information about each component of the system is provided in **Used technologies**._
 
-```mermaid
-flowchart LR
-    A(Frontend) -->|POST /order| B(Server A)
-    A --> |GET /order| B
-    B --> |response POST /order| A
-    B --> |response GET /order & GET /order/orderId| A
-    B --> |sandwitch order| C(Message Broker)
-    B -.-> |store sandwitch order| E(Database)
-    E -.-> |retrieve sandwitch order|B
-    C --> |sandwitch status| B
-    C -->|sandwitch order| D[Server B]
-    D -->|sandwitch status| C
-    style E fill:#ddd,stroke:#aaa,color:#fff,stroke-dasharray: 5 5
-```
+![App Architecture](app-diagram.svg)
 
 - Frontend sends REST requests to Server A, either placing a sandwich order with POST request to /order endpoint or fetching all the sandwich orders with GET request to endpoint /order or a specific sandwich order with GET request to endpoint /order/{orderId}.
 - Server A creates id for order, stores the order in its "database" and sends message to Message Broker via Message Queue "received-orders".
@@ -120,18 +107,7 @@ Message broker with two message queues: "received-orders" and "order-fulfilled":
 - Message Queue "order-fulfilled" sends `ready` or `fail` message to Server A.
 - Status of order is updated to either `ready` or `fail`.
 
-```mermaid
-flowchart LR
-    A(Server A)
-    C(Message Queue received-orders)
-    D(Message Queue order-fulfilled)
-    B(Server B)
-    A --> |status = received| C
-    C --> |status = inQueue| A
-    C --> |status = inQueue| B
-    B --> |satus = ready / failed| D
-    D --> |satus = ready / failed| A
-```
+![Message Broker Diagram](message-broker-diagram.svg)
 
 Message Broker is run from a ready available docker image.
 
